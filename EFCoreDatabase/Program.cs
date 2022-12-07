@@ -1,5 +1,4 @@
 ﻿using EFCoreDatabase.Contexts;
-using EFCoreDatabase.Models;
 using Microsoft.EntityFrameworkCore;
 
 await using (var ctx = new MyContext())
@@ -10,15 +9,13 @@ await using (var ctx = new MyContext())
 
 await using (var ctx2 = new MyContext())
 {
-    var projectRevsision = new ProjectRevision
+    var projectRevsision = new MainEntity
     {
-        RevisionCalculationData = new RevisionCalculationData
+        ChildEntity = new ChildEntity
         {
-            EngineOperation = new ContinuousEngineOperationInformation
+            EntityWithInheritance = new EntityWithInheritanceOne
             {
-                StartsPerYear = 1,
-                OperatingHourRange = 2,
-                RunTimePerYearAndEngine = 3
+                MyNumber = 1
             }
         }
     };
@@ -31,19 +28,16 @@ await using (var ctx3 = new MyContext())
 {
     var projectRevision = await ctx3
         .ProjectRevisions
-        .Include(x => x.RevisionCalculationData)
-        .ThenInclude(x => x!.EngineOperation)
+        .Include(x => x.ChildEntity)
+        .ThenInclude(x => x!.EntityWithInheritance)
         .FirstAsync();
 
-    projectRevision.RevisionCalculationData = new RevisionCalculationData
+    projectRevision.ChildEntity = new ChildEntity
     {
-        EngineOperation = new FlexibleEngineOperationInformation
+        EntityWithInheritance = new EntityWithInheritanceTwo
         {
-            StartsPerYear = 11,
-            OperatingHourRange = 2,
-            RunTimePerYearAndEngine = 3,
-            MonthsCalculationBegin = 4,
-            StartsCalculationBegin = 5
+            MyNumber = 11,
+            MyOtherNumber = 5
         }
     };
     await ctx3.SaveChangesAsync();
