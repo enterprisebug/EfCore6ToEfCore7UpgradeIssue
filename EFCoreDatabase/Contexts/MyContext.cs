@@ -16,33 +16,22 @@ internal class MyContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<ChildEntity>().HasKey(x => x.MainEntityId);
-        modelBuilder.Entity<ChildEntity>().HasOne<MainEntity>()
-            .WithOne(x => x.ChildEntity)
-            .HasForeignKey<ChildEntity>(x => x.MainEntityId);
-
-        modelBuilder.Entity<EntityWithInheritance>().HasKey(x => x.ChildEntityId);
+        modelBuilder.Entity<EntityWithInheritance>().HasKey(x => x.MainEntityId);
         modelBuilder.Entity<EntityWithInheritance>()
             .HasDiscriminator<string>(EntityWithInheritanceConfig.DiscriminatorColumnName)
             .HasValue<EntityWithInheritanceOne>(EntityWithInheritanceConfig.EntityWithInheritanceOne)
             .HasValue<EntityWithInheritanceTwo>(EntityWithInheritanceConfig.EntityWithInheritanceTwo);
 
-        modelBuilder.Entity<EntityWithInheritance>().HasOne<ChildEntity>()
+        modelBuilder.Entity<EntityWithInheritance>().HasOne<MainEntity>()
             .WithOne(x => x.EntityWithInheritance)
-            .HasForeignKey<EntityWithInheritance>(x => x.ChildEntityId);
+            .HasForeignKey<EntityWithInheritance>(x => x.MainEntityId);
     }
-}
-
-public class ChildEntity
-{
-    public Guid MainEntityId { get; set; }
-    public virtual EntityWithInheritance? EntityWithInheritance { get; set; }
 }
 
 public class MainEntity
 {
     public Guid Id { get; set; }
-    public virtual ChildEntity? ChildEntity { get; set; }
+    public virtual EntityWithInheritance? EntityWithInheritance { get; set; }
 }
 
 public static class EntityWithInheritanceConfig
@@ -54,7 +43,7 @@ public static class EntityWithInheritanceConfig
 
 public abstract class EntityWithInheritance
 {
-    public Guid ChildEntityId { get; set; }
+    public Guid MainEntityId { get; set; }
     public int MyNumber { get; set; }
 }
 
