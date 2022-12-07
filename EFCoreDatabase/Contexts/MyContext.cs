@@ -16,7 +16,6 @@ internal class MyContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<EntityWithInheritance>().HasKey(x => x.MainEntityId);
         modelBuilder.Entity<EntityWithInheritance>()
             .HasDiscriminator<string>(EntityWithInheritanceConfig.DiscriminatorColumnName)
             .HasValue<EntityWithInheritanceOne>(EntityWithInheritanceConfig.EntityWithInheritanceOne)
@@ -24,7 +23,7 @@ internal class MyContext : DbContext
 
         modelBuilder.Entity<EntityWithInheritance>().HasOne<MainEntity>()
             .WithOne(x => x.EntityWithInheritance)
-            .HasForeignKey<EntityWithInheritance>(x => x.MainEntityId);
+            .HasForeignKey<EntityWithInheritance>();
     }
 }
 
@@ -43,7 +42,7 @@ public static class EntityWithInheritanceConfig
 
 public abstract class EntityWithInheritance
 {
-    public Guid MainEntityId { get; set; }
+    public Guid Id { get; set; }
     public int MyNumber { get; set; }
 }
 
