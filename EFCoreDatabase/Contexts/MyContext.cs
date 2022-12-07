@@ -4,7 +4,7 @@ namespace EFCoreDatabase.Contexts;
 
 internal class MyContext : DbContext
 {
-    public DbSet<MainEntity> ProjectRevisions => Set<MainEntity>();
+    public DbSet<MainEntity> MainEntities => Set<MainEntity>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

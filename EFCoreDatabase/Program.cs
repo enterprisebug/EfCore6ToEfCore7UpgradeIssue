@@ -9,7 +9,7 @@ await using (var ctx = new MyContext())
 
 await using (var ctx2 = new MyContext())
 {
-    var projectRevsision = new MainEntity
+    var mainEntity = new MainEntity
     {
         ChildEntity = new ChildEntity
         {
@@ -20,19 +20,19 @@ await using (var ctx2 = new MyContext())
         }
     };
 
-    await ctx2.ProjectRevisions.AddAsync(projectRevsision);
+    await ctx2.MainEntities.AddAsync(mainEntity);
     await ctx2.SaveChangesAsync();
 }
 
 await using (var ctx3 = new MyContext())
 {
-    var projectRevision = await ctx3
-        .ProjectRevisions
+    var mainEntity = await ctx3
+        .MainEntities
         .Include(x => x.ChildEntity)
         .ThenInclude(x => x!.EntityWithInheritance)
         .FirstAsync();
 
-    projectRevision.ChildEntity = new ChildEntity
+    mainEntity.ChildEntity = new ChildEntity
     {
         EntityWithInheritance = new EntityWithInheritanceTwo
         {
@@ -43,5 +43,14 @@ await using (var ctx3 = new MyContext())
     await ctx3.SaveChangesAsync();
 }
 
+await using (var ctx4 = new MyContext())
+{
+    var mainEntity = await ctx4
+        .MainEntities
+        .Include(x => x.ChildEntity)
+        .ThenInclude(x => x!.EntityWithInheritance)
+        .FirstAsync();
 
-Console.WriteLine("Done");
+    if (mainEntity.ChildEntity.EntityWithInheritance.GetType() != typeof(EntityWithInheritanceTwo))
+        throw new Exception("Invalid behavior");
+}
